@@ -1,0 +1,65 @@
+#include <stdio.h>
+
+#define MAX_STUDENTS 100
+#define MAX_SUBJECTS 5
+
+// Structure to hold student information
+typedef struct {
+    char name[50];
+    float grades[MAX_SUBJECTS];
+    float average;
+} Student;
+
+// Function prototypes
+void inputStudentData(Student *student);
+void calculateAverage(Student *student);
+void printReportCard(Student student, int subjects);
+
+int main() {
+    Student students[MAX_STUDENTS];
+    int numStudents, numSubjects, i;
+
+    printf("Enter number of students: ");
+    scanf("%d", &numStudents);
+    printf("Enter number of subjects: ");
+    scanf("%d", &numSubjects);
+
+    for (i = 0; i < numStudents; i++) {
+        printf("\nEntering data for student %d:\n", i + 1);
+        inputStudentData(&students[i]);
+        calculateAverage(&students[i]);
+    }
+
+    printf("\nGenerating Report Cards...\n");
+    for (i = 0; i < numStudents; i++) {
+        printReportCard(students[i], numSubjects);
+    }
+
+    return 0;
+}
+
+void inputStudentData(Student *student) {
+    printf("Enter name: ");
+    scanf(" %[^\n]", student->name); // Read string with spaces
+    for (int i = 0; i < MAX_SUBJECTS; i++) {
+        printf("Enter grade for subject %d: ", i + 1);
+        scanf("%f", &student->grades[i]);
+    }
+}
+
+void calculateAverage(Student *student) {
+    float sum = 0.0;
+    for (int i = 0; i < MAX_SUBJECTS; i++) {
+        sum += student->grades[i];
+    }
+    student->average = sum / MAX_SUBJECTS;
+}
+
+void printReportCard(Student student, int subjects) {
+    printf("\nReport Card for %s:\n", student.name);
+    for (int i = 0; i < subjects; i++) {
+        printf("Subject %d: %.2f\n", i + 1, student.grades[i]);
+    }
+    printf("Average: %.2f\n", student.average);
+}
+
