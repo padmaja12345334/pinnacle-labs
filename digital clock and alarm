@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <unistd.h> // For sleep function
+
+void display_time(struct tm *time_info);
+void set_alarm(int *alarm_hour, int *alarm_minute);
+void check_alarm(int alarm_hour, int alarm_minute);
+
+int main() {
+    int alarm_hour = -1, alarm_minute = -1;
+    char choice;
+
+    while (1) {
+        // Display the current time
+        time_t current_time;
+        struct tm *time_info;
+
+        time(&current_time);
+        time_info = localtime(&current_time);
+
+        // Display the current time
+        display_time(time_info);
+
+        // Check if it's time for the alarm
+        check_alarm(alarm_hour, alarm_minute);
+
+        // Ask the user if they want to set or modify the alarm
+        printf("\nOptions:\n");
+        printf("1. Set Alarm\n");
+        printf("2. Exit\n");
+        printf("Choose an option (1 or 2): ");
+        scanf(" %c", &choice); // The space before %c is to handle leftover newline characters
+
+        if (choice == '1') {
+            set_alarm(&alarm_hour, &alarm_minute);
+        } else if (choice == '2') {
+            break;
+        } else {
+            printf("Invalid choice. Try again.\n");
+        }
+
+        sleep(1); // Sleep for 1 second to update the time
+    }
+
+    return 0;
+}
+
+// Function to display the current time
+void display_time(struct tm *time_info) {
+    printf("\rCurrent Time: %.2d:%.2d:%.2d", time_info->tm_hour, time_info->tm_min, time_info->tm_sec);
+    fflush(stdout); // Ensures the time is immediately printed and doesn't get delayed by buffering
+}
+
+// Function to set the alarm
+void set_alarm(int *alarm_hour, int *alarm_minute) {
+    printf("\nEnter Alarm Hour (0-23): ");
+    scanf("%d", alarm_hour);
+    if (*alarm_hour < 0 || *alarm_hour > 23) {
+        printf("Invalid hour! Setting alarm failed.\n");
+        return;
+    }
+
+    printf("Enter Alarm Minute (0-59): ");
+    scanf("%d", alarm_minute);
+    if (*alarm_minute < 0 || *alarm_minute > 59) {
+        printf("Invalid minute! Setting alarm failed.\n");
+        return;
+    }
+
+    printf("Alarm set for %.2d:%.2d\n", *alarm_hour, *alarm_minute);
+}
+
+// Function to check if the current time matches the alarm time
+void check_alarm(int alarm_hour, int alarm_minute) {
+    if (alarm_hour == -1 || alarm_minute == -1) {
+        return; // No alarm set
+    }
+
+    // Get current system time
+    time_t current_time;
+    struct tm *time_info;
+
+    time(&current_time);
+    time_info = localtime(&current_time);
+
+    // Compare current time with alarm time
+    if (time_info->tm_hour == alarm_hour && time_info->tm_min == alarm_minute) {
+        printf("\n*** ALARM!!! Time to wake up! ***\n");
+        // You could also add a sound here if your platform supports it
+    }
+}
